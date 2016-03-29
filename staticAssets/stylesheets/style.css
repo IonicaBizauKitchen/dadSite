@@ -29,6 +29,12 @@ h1{
 	text-align: center;
 }
 
+#language {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
 #menu {
 	list-style-type: none;
 	margin: 0;
@@ -41,7 +47,7 @@ h1{
 }
 
 li{
-	width: 16%;
+	width: 13.5%;
 	display: inline-block;
 	text-align: center;
 }

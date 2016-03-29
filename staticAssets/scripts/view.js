@@ -1,3 +1,8 @@
+var menu = document.getElementById('menu');
+var a = document.getElementsByTagName('a');
+var langButton = document.querySelector('#language a');
+var container = document.getElementById('image');
+
 var categories = {
 	models: {
 			count:21,
@@ -9,8 +14,8 @@ var categories = {
 			},
 	drawings: {
 			count: 31,
-			category: 'dessins',
-			categorie: 'drawings',
+			category: 'drawings',
+			categorie: 'dessins',
 			EN: 'pencil and graphite on synthetic paper',
 			EN2: 'graphite powder and pencil on synthetic paper 63" x 47',
 			FR: 'crayon et graphite sur papier synthétique',
@@ -50,49 +55,114 @@ var categories = {
 			titles: ['Autorespiration # 1', 'Autorespiration # 2', 'Autorespiration # 3', 'Autorespiration # 4', 'Autorespiration # 5', 'Autorespiration # 6', 'Autorespiration # 7', 'Autorespiration # 8', 'Autorespiration # 9', 'Autorespiration # 10', 'Autorespiration # 11', 'Autorespiration # 12', 'Autorespiration # 13', 'Autorespiration # 14', 'Autorespiration # 15']
 			},
 	bio: {
-		FR: 'Vladimir Zabeida est né à Lviv, en Ukraine, en 1956. En 1991, quand l’Union Soviétique était sur le point de s’effondrer, Zabeida a quitté les incertitudes politiques de son pays d’origine et s’est établi au Canada. Sa formation multidisciplinaire en art du Collège d’Arts Appliqués de Lviv, Ukraine (1977-1975) et de l’Académie des Arts de Lviv, Ukraine, (1977-1982) a été instrumentale dans son développement artistique. Pendant plusieurs années, Zabeida a travaillé à l’Atelier Circulaire à Montréal. Se concentrant majoritairement dans la gravure photopolymère et le dessin. Il a aussi conduit des ateliers et séminaires d’estampe. De 2003 à 2004, Vladimir Zabeida a enseigné à l’Université Queens à Kingston, Ontario. Il a aussi maintenu simultanément sa pratique dans son studio à Montréal. Au cours des dernières années, Zabeida a surtout concentre son attention sur sa nouvelle série de travaux, composée de dessins à grande échelle ainsi que de peintures. Il est le récipiendaire de plusieurs prix et reconnaissances, parmis lesquelles: Bourse de recherche et création, Type A, Conseil des arts et des lettres du Québec, (2007); First Prize- “Evolution”, North American Juried Exhibition, Windsor, Canada (2004); Pollock-Krasner Award, New York, NY , USA (2003); First Place, The 8th Great Canadian Printmaking Competition, Toronto, Canada (2002). Les travaux de Vladimir Zabeida ont été exposés internationalement et sont inclus dans plusieurs collections privées et publiques en Amérique du Nord, Europe et Asie: Ernst & Young, Toronto, Canada LOTO- Québec, Montréal, Canada Guang Dong Museum of Art, Guangzhou, China Fidelity Investments, Boston, USA Liu Hai Su Art Museum, Shanghai, China National Bank of Canada, Montréal, Canada Le Cirque du Soleil, Montréal, Canada; Rio Tinto Alcan Canada, Montréal, Canada Meditech Circle, Westwood, MA, USA Bibliotheque Nationale du Québec, Montréal, Canada',
-		EN: 'Vladimir Zabeida was born in Lviv, Ukraine in 1956. In 1991, when the Soviet Union was on the verge of collapse, he left the political uncertainties of his homeland and settled in Canada. His multidisciplinary training in art from the Lviv College of Applied Arts, Ukraine (1971-75) and the Lviv Academy of Arts, Ukraine (1977-82) has been instrumental in his artistic development. For many years Zabeida worked at Atelier Circulaire in Montreal, predominantly concentrating in the field of photopolymer gravure and drawings. He has also conducted printmaking workshops and seminars. In 2003 – 2004 Vladimir Zabeida taught at the Queen’s University in Kingston, Ontario, while maintaining a studio practice in Montreal. In the past few years Zabeida focused his attention on a new body of work, comprised of large scale drawings and paintings. He is the recipient of many grants and awards, among which are: Artistic Research and Creation Grant,Type A,Conseil des arts et des lettres du Québec (2007) First Prize- “Evolution”, North American Juried Exhibition, Windsor, Canada (2004) Pollock-Krasner Award, New York, NY,USA (2003) First Place, The 8th Great Canadian Printmaking Competition, Toronto, Canada (2002) Vladimir Zabeida’s work have been exhibited internationally and are included in many private and public collections throughout North America, Europe and Asia including: Ernst & Young, Toronto, Canada, Guang Dong Museum of Art, Guangzhou, China Fidelity Investments, Boston, USA Liu Hai Su Art Museum, Shanghai, China LOTO- Québec, Montreal, Canada National Bank of Canada, Montreal, Canada Le Cirque du Soleil, Montreal, Canada Rio Tinto Alcan Canada, Montreal, Canada Meditech Circle, Westwood, MA, USA Bibliotheque Nationale du Québec,Montreal,Canada',
-		titles: []
+			count: 0,
+			category: 'biography',
+			categorie: 'biographie',
+			FR: 'Vladimir Zabeida est né à Lviv, en Ukraine, en 1956. En 1991, quand l’Union Soviétique était sur le point de s’effondrer, Zabeida a quitté les incertitudes politiques de son pays d’origine et s’est établi au Canada. Sa formation multidisciplinaire en art du Collège d’Arts Appliqués de Lviv, Ukraine (1977-1975) et de l’Académie des Arts de Lviv, Ukraine, (1977-1982) a été instrumentale dans son développement artistique. Pendant plusieurs années, Zabeida a travaillé à l’Atelier Circulaire à Montréal. Se concentrant majoritairement dans la gravure photopolymère et le dessin. Il a aussi conduit des ateliers et séminaires d’estampe. De 2003 à 2004, Vladimir Zabeida a enseigné à l’Université Queens à Kingston, Ontario. Il a aussi maintenu simultanément sa pratique dans son studio à Montréal. Au cours des dernières années, Zabeida a surtout concentre son attention sur sa nouvelle série de travaux, composée de dessins à grande échelle ainsi que de peintures. Il est le récipiendaire de plusieurs prix et reconnaissances, parmis lesquelles: Bourse de recherche et création, Type A, Conseil des arts et des lettres du Québec, (2007); First Prize- “Evolution”, North American Juried Exhibition, Windsor, Canada (2004); Pollock-Krasner Award, New York, NY , USA (2003); First Place, The 8th Great Canadian Printmaking Competition, Toronto, Canada (2002). Les travaux de Vladimir Zabeida ont été exposés internationalement et sont inclus dans plusieurs collections privées et publiques en Amérique du Nord, Europe et Asie: Ernst & Young, Toronto, Canada LOTO- Québec, Montréal, Canada Guang Dong Museum of Art, Guangzhou, China Fidelity Investments, Boston, USA Liu Hai Su Art Museum, Shanghai, China National Bank of Canada, Montréal, Canada Le Cirque du Soleil, Montréal, Canada; Rio Tinto Alcan Canada, Montréal, Canada Meditech Circle, Westwood, MA, USA Bibliotheque Nationale du Québec, Montréal, Canada',
+			EN: 'Vladimir Zabeida was born in Lviv, Ukraine in 1956. In 1991, when the Soviet Union was on the verge of collapse, he left the political uncertainties of his homeland and settled in Canada. His multidisciplinary training in art from the Lviv College of Applied Arts, Ukraine (1971-75) and the Lviv Academy of Arts, Ukraine (1977-82) has been instrumental in his artistic development. For many years Zabeida worked at Atelier Circulaire in Montreal, predominantly concentrating in the field of photopolymer gravure and drawings. He has also conducted printmaking workshops and seminars. In 2003 – 2004 Vladimir Zabeida taught at the Queen’s University in Kingston, Ontario, while maintaining a studio practice in Montreal. In the past few years Zabeida focused his attention on a new body of work, comprised of large scale drawings and paintings. He is the recipient of many grants and awards, among which are: Artistic Research and Creation Grant,Type A,Conseil des arts et des lettres du Québec (2007) First Prize- “Evolution”, North American Juried Exhibition, Windsor, Canada (2004) Pollock-Krasner Award, New York, NY,USA (2003) First Place, The 8th Great Canadian Printmaking Competition, Toronto, Canada (2002) Vladimir Zabeida’s work have been exhibited internationally and are included in many private and public collections throughout North America, Europe and Asia including: Ernst & Young, Toronto, Canada, Guang Dong Museum of Art, Guangzhou, China Fidelity Investments, Boston, USA Liu Hai Su Art Museum, Shanghai, China LOTO- Québec, Montreal, Canada National Bank of Canada, Montreal, Canada Le Cirque du Soleil, Montreal, Canada Rio Tinto Alcan Canada, Montreal, Canada Meditech Circle, Westwood, MA, USA Bibliotheque Nationale du Québec,Montreal,Canada',
+			titles: []
 	}
 };
 
-// for(var prop in folders){
-// 	for(var y = 1; y<=folders[prop]; y++){
-// 		var picture = document.createElement('img');
-// 		picture.src = '/images/'+prop+'/'+y+'.jpg';
-// 	}
-// }
+var model = {
+	language: 'fr'
+}
 
- // <li><a id='1'>drawings</a></li>
- //                <li><a id='2'>monotypes</a></li>
- //                <li><a id='3'>etchings</a></li>
- //                <li><a id='4'>3d models</a></li>
- //                <li><a id='5'>paintings</a></li>
- //                <li><a id='6'>photography</a></li>
- //                <li><a id='6'>bio</a></li>
+var controller = {
+	init: function(){
+		view.init();
+	},
+	getLanguage: function(){
+		return model.language;
+	},
+	changeLanguage: function(targetLanguage){
+		console.log('targetLang', targetLanguage);
+		model.language = targetLanguage;
+		console.log('in model', model.language);
+		view.render();
+	}
+}
 
-// document.getElementById('menu').addEventListener("click", function(e) {
-// 	var folder = e.target.innerHTML.toLowerCase();
+var view = {
+	init: function(){
+		function preloadImages(){
+			for(var prop in categories){
+				if (categories.hasOwnProperty(prop)) {
+					for(var y = 1; y<=categories[prop].count; y++){
+						var picture = document.createElement('img');
+						picture.src = '/images/'+prop+'/'+y+'.jpg';
+					}
+				}
+			}
+		};
+		preloadImages();
+		this.render();
+	},
+	clean: function(){
+		for(var x = 0; x<document.getElementsByTagName('a').length; x++){
+			document.getElementsByTagName('a')[x].innerHTML = '';
+		}
 
-// 	if(folder === '3d models'){
-// 		folder = 'models';
-// 	}
-// 	console.log(folder);
-// 	update(folder);
-// });
+	},
+	render: function(){
+		this.clean();
 
-// function update(folder){
-// 	var container = document.getElementById('image');
-// 	while(document.images.length){
-// 		container.removeChild(document.images[0]);
-// 	}
-// 	for(var y = 1; y<=folders[folder]; y++){
-// 		var picture = document.createElement('img');
-// 		picture.src = '/images/'+folder+'/'+y+'.jpg';
-// 		container.appendChild(picture);
-// 	}
-// }
+		var language = controller.getLanguage();
+		console.log('view lang', language);
+		console.log('from view model lang', model.language);
 
+		if(language === 'en'){
+			langButton.appendChild(document.createTextNode('fr'));
+			for(var prop in categories){
+				if (categories.hasOwnProperty(prop)) {
+					var textNode = document.createTextNode(categories[prop].category);
+					var index = Object.keys(categories).indexOf(prop);
+					a[index+1].appendChild(textNode);
+				}
+			}
+		}else if(language==='fr'){
+			langButton.appendChild(document.createTextNode('en'));
+			for(var prop in categories){
+				if (categories.hasOwnProperty(prop)) {
+					var textNode = document.createTextNode(categories[prop].categorie);
+					var index = Object.keys(categories).indexOf(prop);
+					a[index+1].appendChild(textNode);
+				}
+			}
+		};
 
+		function update(category){
+			while(document.images.length){
+				container.removeChild(document.images[0]);
+			}
 
-// state = language
+			for(var prop in categories){
+				if (categories.hasOwnProperty(prop)) {
+					for(var y = 1; y<=categories[prop].count; y++){
+						var picture = document.createElement('img');
+						picture.src = '/images/'+prop+'/'+y+'.jpg';
+						container.appendChild(picture);
+					}
+				}
+			}
+		};
+
+		langButton.addEventListener('click', function(e){
+			var language = e.target.innerHTML;
+			console.log(language);
+			controller.changeLanguage(language);
+		});
+
+		menu.addEventListener('click', function(e) {
+			var category = e.target.innerHTML.toLowerCase();
+
+			if(category === '3d models'){
+				category = 'models';
+			}
+			update(category);
+		});
+	}
+}
+
+controller.init();
+
