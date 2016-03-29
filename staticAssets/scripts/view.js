@@ -1,305 +1,98 @@
-function start(){
-
-	var slider = document.getElementById('fences');
-	var windowMiddle = (slider.offsetWidth)/2;
-	var end, originals, imageSize, numImagesPerPage, clones, images, selected;
-
-	function preload(){
-		var start = new Date().getTime();
-		var loader = document.createElement('img');
-		loader.setAttribute('id', 'loader');
-		loader.src = 'images/loader.gif';
-		fences.appendChild(loader);
-
-		function preloadImage(x){
-			var picture = loadImage(x);
-
-			if(x===20){
-				picture.onload = function(){
-					fences.removeChild(loader);
-					var end = new Date().getTime();
-					console.log('finished', (end-start)/1000);
-					setTimeout(function(){sliderStart()}, 2);
-				};
-			}
-		};
-
-		for(var x = 1; x<=20; x++){
-			preloadImage(x);
-		};
-	};
-
-	function loadImage(x){
-		var picture = document.createElement('img');
-		picture.src = '/images/'+x+'.jpeg';
-		return picture;
-	};
-
-	function sliderStart(){
-		prepareInfiniteScroll();
-
-		slider.addEventListener('scroll', function(){
-			clearSelection();
-			scrolling();
-		});
-
-		document.getElementsByTagName('input')[0].addEventListener('keydown', function(e){
-			findSearchedCountry(e, this.value);
-		}, false);
-
-
-		document.getElementById('add').addEventListener('click', function(){
-			changeImageSize('add');
-		});
-
-		document.getElementById('substract').addEventListener('click', function(){
-			changeImageSize('substract');
-		});
-
-		window.addEventListener('resize', function(){
-			windowResize();
-		});
-
-		for(var x = 0; x<document.images.length; x++){
-			document.images[x].addEventListener('click', function(){
-				focussing(this);
-			});
-		};
-	};
-
-	function prepareInfiniteScroll(){
-		function createImage(x){
-			var picture = loadImage(x);
-			picture.classList.add('original');
-			var uniqueClass = getImageClass(x);
-			picture.classList.add(uniqueClass);
-			slider.appendChild(picture);
-		};
-
-		function getImageClass(x){
-			if(x===10){
-				return model.countries[0];
-			}else if(x===11){
-				return model.countries[1];
-			}else if(x===12){
-				return model.countries[2];
-			}else{
-				return x;
-			};
-		};
-
-		for(var x = 1; x<=20; x++){
-			createImage(x);
-		};
-
-		originals = document.getElementsByClassName('original');
-		imageSize = document.images[0].clientWidth;
-		numImagesPerPage = Math.round(slider.offsetWidth/imageSize)+1;
-		clones = document.getElementsByClassName('clone');
-
-		appendClones();
-
-		var position = originals[0].offsetLeft;
-		scrolling(position);
-	};
-
-	function appendClones(selectedImage){
-		var lastOriginalImageIndex = originals.length-1;
-		var lastCloneIndex = lastOriginalImageIndex-numImagesPerPage;
-
-		function createClone(x){
-			var imageClass = originals[x].classList[1];
-			var clone = originals[x].cloneNode(true);
-			clone.removeAttribute('class');
-			clone.setAttribute('class', 'clone '+imageClass);
-
-			if(selectedImage!==undefined&&selectedImage.classList.contains('clone')){
-				clone.classList.add('selected');
-			}
-
-			return clone;
-		};
-
-		while (clones.length !== 0) {
-			clones[0].parentNode.removeChild(clones[0]);
-		};
-
-		for(var x = lastOriginalImageIndex; x>lastCloneIndex; x--){
-			slider.insertBefore(createClone(x), slider.childNodes[0]);
-		};
-
-		images = document.images;
-		end = Math.round(slider.scrollWidth-slider.offsetWidth);
-	};
-
-	function changeImageSize(change){
-		var largest = document.getElementById('container').clientHeight*0.6;
-		var smallest = document.getElementById('container').clientHeight*0.1;
-		var ratio, targetHeight, targetWidth, imageHeight, imageWidth;
-		var selectedImage = [];
-
-		if(images[0].classList.contains('selected')){
-			imageHeight = images[1].clientHeight;
-			imageWidth = images[1].clientWidth;
-		}else{
-			imageHeight = images[0].clientHeight;
-			imageWidth = images[0].clientWidth;
-		};
-
-		if(change==='add'){
-			ratio = 1.5;
-			targetHeight = imageHeight*ratio;
-			if (targetHeight>largest){
-				targetHeight=largest;
-				ratio = targetHeight/imageHeight;
-			}
-
-		}else if(change==='substract'){
-			ratio = 0.75;
-			targetHeight = imageHeight*ratio;
-			if(targetHeight<smallest){
-				targetHeight=smallest;
-				ratio = targetHeight/imageHeight;
-			}
-		};
-
-		targetWidth = imageWidth*ratio;
-
-		for(var x=0; x<images.length; x++){
-			images[x].style.width = targetWidth+'px';
-			images[x].style.height = targetHeight+'px';
-			if(images[x].classList.contains('selected')){
-				selectedImage.push(images[x]);
-			};
-		};
-
-		appendClones(selectedImage[0]);
-
-		if(document.getElementsByClassName('selected').length){
-			position = centeredPosition(document.getElementsByClassName('selected')[0]);
-			scrolling(position);
-		};
-	};
-
-	function findSearchedCountry(e, v){
-		clearSelection();
-
-		if(e.keyCode === 13){
-		 	document.getElementsByTagName('input')[0].value = '';
-		 	var selectedCountry = document.getElementsByClassName(v.toLowerCase())[0];
-		 	focussing(selectedCountry);
-		};
-		//else fuzzy search
-	};
-
-	function focussing(x){
-		clearSelection();
-		var imageClass= x.classList[1];
-		var indexOfSelectedImageInFullArray = Array.prototype.indexOf.call(images, x);
-		var indexOfSelectedImageInOriginalsArray;
-		var position;
-		var image;
-
-		function clonesCenteringAdjustmentNeeded(img){
-			var index = Array.prototype.indexOf.call(images, img);
-			var middleClone = clones.length/2;
-			if(index<=middleClone){
-				return true;
-			}else{
-				return false;
-			}
-		};
-
-		if(x.classList.contains('clone')){
-			var originalImage = document.getElementsByClassName(imageClass)[1];
-			var index = Array.prototype.indexOf.call(originals, originalImage);
-			indexOfSelectedImageInOriginalsArray = index;
-
-			if(clonesCenteringAdjustmentNeeded(x)){
-				image = document.getElementsByClassName(imageClass)[1];
-			}else{
-				image = x;
-			}
-		}else{
-			image = x;
-			var index = Array.prototype.indexOf.call(originals, image);
-			indexOfSelectedImageInOriginalsArray = index;
-		}
-
-		position = centeredPosition(image);
-		scrolling(position);
-
-		var link = model.sources[indexOfSelectedImageInOriginalsArray];
-		console.log(link);
-	};
-
-	function scrolling(position){
-		console.log(end, slider.scrollLeft);
-		function userScroll(){
-			if(slider.scrollLeft === 0){
-				var cloneClass = clones[0].classList[1];
-				var targetImage = document.getElementsByClassName(cloneClass)[1];
-				position = targetImage.offsetLeft;
-				slider.scrollLeft = position;
-			}else if(slider.scrollLeft === end){
-				var targetImage = clones[clones.length-1];
-				var imageSize = targetImage.clientWidth;
-				position = (targetImage.offsetLeft)-(slider.offsetWidth-imageSize);
-				slider.scrollLeft = position;
-			}
-			requestAnimationFrame(userScroll);
-		};
-
-		function appScroll(){
-			slider.scrollLeft = position;
-		};
-
-		if(position !== undefined){
-			appScroll();
-		}else{
-			userScroll();
-		};
-	};
-
-	function centeredPosition(x){
-		x.classList.add('selected');
-		x.classList.add('ignoreScroll');
-		selected = document.getElementsByClassName('selected');
-		var imageHalfWidth = (x.clientWidth)/2;
-		var position = (x.offsetLeft)-windowMiddle+imageHalfWidth;
-		return position;
-	};
-
-	function clearSelection(){
-		if(!document.getElementsByClassName('ignoreScroll').length){
-			var selected = document.getElementsByClassName('selected');
-			if(selected.length){
-				selected[0].classList.remove('selected');
-			};
-		}else{
-			document.getElementsByClassName('ignoreScroll')[0].classList.remove('ignoreScroll');
-		}
-	};
-
-	function windowResize(){
-		appendClones();
-	};
-
-	var model = {
-		countries: [
-			'canada',
-			'ukraine',
-			'u.s.a'
-		],
-		sources: [
-			'https://www.google.ca/maps/search/google+maps/@45.4579956,-73.6406172,3a,75y,30.74h,87.2t/data=!3m7!1e1!3m5!1stJRoAYkry6Jzc_I72Mfzkg!2e0!6s%2F%2Fgeo0.ggpht.com%2Fcbk%3Fpanoid%3DtJRoAYkry6Jzc_I72Mfzkg%26output%3Dthumbnail%26cb_client%3Dmaps_sv.tactile.gps%26thumb%3D2%26w%3D203%26h%3D100%26yaw%3D97.5%26pitch%3D-18.999996!7i13312!8i6656',
-			'https://www.google.ca/maps/search/google+maps/@45.4793767,-73.4695146,3a,75y,315.01h,87.11t/data=!3m7!1e1!3m5!1sgFyj-_XPD89XuwaDeCFhkg!2e0!6s%2F%2Fgeo0.ggpht.com%2Fcbk%3Fpanoid%3DgFyj-_XPD89XuwaDeCFhkg%26output%3Dthumbnail%26cb_client%3Dmaps_sv.tactile.gps%26thumb%3D2%26w%3D203%26h%3D100%26yaw%3D349.5%26pitch%3D-3!7i13312!8i6656',
-			'https://www.google.ca/maps/search/google+maps/@45.5664567,-73.5684767,3a,75y,239.6h,82.47t/data=!3m8!1e1!3m6!1s-p2jtABzslyA%2FUu2vNyo8LaI%2FAAAAAAAKULo%2FPHYUtqb-pCE!2e4!3e11!6s%2F%2Flh6.googleusercontent.com%2F-p2jtABzslyA%2FUu2vNyo8LaI%2FAAAAAAAKULo%2FPHYUtqb-pCE%2Fw203-h101-n-k-no%2F!7i10000!8i5000'
-		]
-	};
-
-	preload();
-
+var categories = {
+	models: {
+			count:21,
+			category: '3d models',
+			categorie: 'modèles 3d',
+			EN: 'These 3D structures, found objects, and sculptures in most cases were built as research and inspirational models for large scale drawings, a reverse approach to the traditional method, when the media of drawing was an essential study tool for the creation of large sculptures.',
+			FR: 'Ces formes 3D, objets trouvés et sculptures ont été construites, dans la plupart des cas, comme moyens de recherche et d’inspiration pour mes dessins de large format. Cette approche est opposée à l’approche traditionnelle, où le dessin est l’étape préparatoire à un plus large projet, telle une sculpture.',
+			titles: ['Brace', 'Cage unit Z2', 'Cage unit Z3','Cage unit Z4', 'Cage unit Z8', 'Cage unit Z9', 'Luminaires', 'Cage unit Z1', 'Cage unit Z14', 'Cage unit Z22', 'Cage unit Z13', 'Cage unit Z19', 'Unité noire', 'Élément mobile', 'Site', 'Élément monile B', 'Cage unit Z11', 'Cage unit Z22', 'Cage unit Z7', 'Lignt tower', 'Spider copy']
+			},
+	drawings: {
+			count: 31,
+			category: 'dessins',
+			categorie: 'drawings',
+			EN: 'pencil and graphite on synthetic paper',
+			EN2: 'graphite powder and pencil on synthetic paper 63" x 47',
+			FR: 'crayon et graphite sur papier synthétique',
+			FR2: 'poudre de graphite et crayon sur papier synthétique 160 x 119 cm',
+			titles: ['SPRN / Vide et raison d’être', 'SHLL / Vide et raison d’être', 'AMHR / Vide et raison d’être', 'CPSL2 / Vide et raison d’être', 'CPSLA / Vide et raison d’être', 'FNNL I / Vide et raison d’être', 'FNNL II / Vide et raison d’être', 'VSSL / Vide et raison d’être', 'Lost and Found', 'Jointures', 'Propulsion #1', 'Slingshot', 'Propulsion # 2', 'Cône de déjection', 'Créature sur tiges', 'Instrument', 'Outil', 'Labourage # 1', 'Labourage # 2', 'Labourage # 3', 'En formation', 'Extention', 'Légéreté de l’être', 'Éternel changement', 'Rayons obliques', 'Matière première #2', 'Tissage # 2','Sans titre', 'Field X', 'Regénération', 'Paysage changeant', 'Perpétuité', 'Matière première #1']
+			},
+	etchings: {
+			count: 10,
+			category: 'etchings',
+			categorie: 'gravures',
+			EN: 'photopolymer etchings and chine-collé on arches',
+			FR: 'gravure photopolymère et chine-collé sur arches',
+			titles: ['Lac blanc', 'Colonne', 'V-Vase #1', 'Herbe', 'In-Vase', 'Respiration # 1', 'Respiration # 2', 'Respiration # 4', 'Respiration # 5', 'Respiration # 6']
+			},
+	monotypes: {
+			count: 13,
+			category: 'monotypes',
+			categorie: 'monotypes',
+			EN: 'water based monotypes on arches',
+			FR: 'monotypes à base d’eau sur arches',
+			titles: ['In transition L', 'Elemental earth worl I', 'Reservoir S', 'Passage M', 'Sheltering secrets', 'Elemental Earth work C', 'Jeux de sable I', 'Jeux de sable Z', 'Passage Z', 'Reservoir # 1', 'Reservoir # 2', 'Reservoir A', 'Sans titre K']
+			},
+	paintings: {
+			count: 16,
+			category: 'paintings',
+			categorie: 'peintures',
+			EN: 'oil on wood pannel',
+			FR: 'huile sur panneau de bois',
+			titles: ['Sans titre L', 'Sans titre N', 'Traverses # 1', 'Traverses # 2', 'Traverses # 3', 'Traverses # 4', 'Traverses # 5', 'Traverses # 6', 'Traverses # 7', 'Traverses # 8', 'Traverses # 9', 'Traverses # 10', 'Traverses # 11', 'Traverses # 12', 'Traverses # 13', 'Traverses # 14']
+			},
+	photography: {
+			count: 15,
+			category: 'photography',
+			categorie: 'photographie',
+			EN: 'Play is oxigen for creation.',
+			FR: 'Le jeu est l’oxigène de la créativité.',
+			titles: ['Autorespiration # 1', 'Autorespiration # 2', 'Autorespiration # 3', 'Autorespiration # 4', 'Autorespiration # 5', 'Autorespiration # 6', 'Autorespiration # 7', 'Autorespiration # 8', 'Autorespiration # 9', 'Autorespiration # 10', 'Autorespiration # 11', 'Autorespiration # 12', 'Autorespiration # 13', 'Autorespiration # 14', 'Autorespiration # 15']
+			},
+	bio: {
+		FR: 'Vladimir Zabeida est né à Lviv, en Ukraine, en 1956. En 1991, quand l’Union Soviétique était sur le point de s’effondrer, Zabeida a quitté les incertitudes politiques de son pays d’origine et s’est établi au Canada. Sa formation multidisciplinaire en art du Collège d’Arts Appliqués de Lviv, Ukraine (1977-1975) et de l’Académie des Arts de Lviv, Ukraine, (1977-1982) a été instrumentale dans son développement artistique. Pendant plusieurs années, Zabeida a travaillé à l’Atelier Circulaire à Montréal. Se concentrant majoritairement dans la gravure photopolymère et le dessin. Il a aussi conduit des ateliers et séminaires d’estampe. De 2003 à 2004, Vladimir Zabeida a enseigné à l’Université Queens à Kingston, Ontario. Il a aussi maintenu simultanément sa pratique dans son studio à Montréal. Au cours des dernières années, Zabeida a surtout concentre son attention sur sa nouvelle série de travaux, composée de dessins à grande échelle ainsi que de peintures. Il est le récipiendaire de plusieurs prix et reconnaissances, parmis lesquelles: Bourse de recherche et création, Type A, Conseil des arts et des lettres du Québec, (2007); First Prize- “Evolution”, North American Juried Exhibition, Windsor, Canada (2004); Pollock-Krasner Award, New York, NY , USA (2003); First Place, The 8th Great Canadian Printmaking Competition, Toronto, Canada (2002). Les travaux de Vladimir Zabeida ont été exposés internationalement et sont inclus dans plusieurs collections privées et publiques en Amérique du Nord, Europe et Asie: Ernst & Young, Toronto, Canada LOTO- Québec, Montréal, Canada Guang Dong Museum of Art, Guangzhou, China Fidelity Investments, Boston, USA Liu Hai Su Art Museum, Shanghai, China National Bank of Canada, Montréal, Canada Le Cirque du Soleil, Montréal, Canada; Rio Tinto Alcan Canada, Montréal, Canada Meditech Circle, Westwood, MA, USA Bibliotheque Nationale du Québec, Montréal, Canada',
+		EN: 'Vladimir Zabeida was born in Lviv, Ukraine in 1956. In 1991, when the Soviet Union was on the verge of collapse, he left the political uncertainties of his homeland and settled in Canada. His multidisciplinary training in art from the Lviv College of Applied Arts, Ukraine (1971-75) and the Lviv Academy of Arts, Ukraine (1977-82) has been instrumental in his artistic development. For many years Zabeida worked at Atelier Circulaire in Montreal, predominantly concentrating in the field of photopolymer gravure and drawings. He has also conducted printmaking workshops and seminars. In 2003 – 2004 Vladimir Zabeida taught at the Queen’s University in Kingston, Ontario, while maintaining a studio practice in Montreal. In the past few years Zabeida focused his attention on a new body of work, comprised of large scale drawings and paintings. He is the recipient of many grants and awards, among which are: Artistic Research and Creation Grant,Type A,Conseil des arts et des lettres du Québec (2007) First Prize- “Evolution”, North American Juried Exhibition, Windsor, Canada (2004) Pollock-Krasner Award, New York, NY,USA (2003) First Place, The 8th Great Canadian Printmaking Competition, Toronto, Canada (2002) Vladimir Zabeida’s work have been exhibited internationally and are included in many private and public collections throughout North America, Europe and Asia including: Ernst & Young, Toronto, Canada, Guang Dong Museum of Art, Guangzhou, China Fidelity Investments, Boston, USA Liu Hai Su Art Museum, Shanghai, China LOTO- Québec, Montreal, Canada National Bank of Canada, Montreal, Canada Le Cirque du Soleil, Montreal, Canada Rio Tinto Alcan Canada, Montreal, Canada Meditech Circle, Westwood, MA, USA Bibliotheque Nationale du Québec,Montreal,Canada',
+		titles: []
+	}
 };
 
-start();
+// for(var prop in folders){
+// 	for(var y = 1; y<=folders[prop]; y++){
+// 		var picture = document.createElement('img');
+// 		picture.src = '/images/'+prop+'/'+y+'.jpg';
+// 	}
+// }
+
+ // <li><a id='1'>drawings</a></li>
+ //                <li><a id='2'>monotypes</a></li>
+ //                <li><a id='3'>etchings</a></li>
+ //                <li><a id='4'>3d models</a></li>
+ //                <li><a id='5'>paintings</a></li>
+ //                <li><a id='6'>photography</a></li>
+ //                <li><a id='6'>bio</a></li>
+
+// document.getElementById('menu').addEventListener("click", function(e) {
+// 	var folder = e.target.innerHTML.toLowerCase();
+
+// 	if(folder === '3d models'){
+// 		folder = 'models';
+// 	}
+// 	console.log(folder);
+// 	update(folder);
+// });
+
+// function update(folder){
+// 	var container = document.getElementById('image');
+// 	while(document.images.length){
+// 		container.removeChild(document.images[0]);
+// 	}
+// 	for(var y = 1; y<=folders[folder]; y++){
+// 		var picture = document.createElement('img');
+// 		picture.src = '/images/'+folder+'/'+y+'.jpg';
+// 		container.appendChild(picture);
+// 	}
+// }
+
+
+
+// state = language
