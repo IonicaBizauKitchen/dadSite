@@ -5,14 +5,6 @@ var langButton = document.querySelector('#language a');
 var container = document.getElementById('image');
 
 var categories = {
-	models: {
-			count:21,
-			category: '3d models',
-			categorie: 'modèles 3d',
-			EN: 'These 3D structures, found objects, and sculptures in most cases were built as research and inspirational models for large scale drawings, a reverse approach to the traditional method, when the media of drawing was an essential study tool for the creation of large sculptures.',
-			FR: 'Ces formes 3D, objets trouvés et sculptures ont été construites, dans la plupart des cas, comme moyens de recherche et d’inspiration pour mes dessins de large format. Cette approche est opposée à l’approche traditionnelle, où le dessin est l’étape préparatoire à un plus large projet, telle une sculpture.',
-			titles: ['Brace', 'Cage unit Z2', 'Cage unit Z3','Cage unit Z4', 'Cage unit Z8', 'Cage unit Z9', 'Luminaires', 'Cage unit Z1', 'Cage unit Z14', 'Cage unit Z22', 'Cage unit Z13', 'Cage unit Z19', 'Unité noire', 'Élément mobile', 'Site', 'Élément monile B', 'Cage unit Z11', 'Cage unit Z22', 'Cage unit Z7', 'Lignt tower', 'Spider copy']
-			},
 	drawings: {
 			count: 31,
 			category: 'drawings',
@@ -55,7 +47,15 @@ var categories = {
 			FR: 'Le jeu est l’oxigène de la créativité.',
 			titles: ['Autorespiration # 1', 'Autorespiration # 2', 'Autorespiration # 3', 'Autorespiration # 4', 'Autorespiration # 5', 'Autorespiration # 6', 'Autorespiration # 7', 'Autorespiration # 8', 'Autorespiration # 9', 'Autorespiration # 10', 'Autorespiration # 11', 'Autorespiration # 12', 'Autorespiration # 13', 'Autorespiration # 14', 'Autorespiration # 15']
 			},
-	bio: {
+	models: {
+			count:21,
+			category: '3d models',
+			categorie: 'modèles 3d',
+			EN: 'These 3D structures, found objects, and sculptures in most cases were built as research and inspirational models for large scale drawings, a reverse approach to the traditional method, when the media of drawing was an essential study tool for the creation of large sculptures.',
+			FR: 'Ces formes 3D, objets trouvés et sculptures ont été construites, dans la plupart des cas, comme moyens de recherche et d’inspiration pour mes dessins de large format. Cette approche est opposée à l’approche traditionnelle, où le dessin est l’étape préparatoire à un plus large projet, telle une sculpture.',
+			titles: ['Brace', 'Cage unit Z2', 'Cage unit Z3','Cage unit Z4', 'Cage unit Z8', 'Cage unit Z9', 'Luminaires', 'Cage unit Z1', 'Cage unit Z14', 'Cage unit Z22', 'Cage unit Z13', 'Cage unit Z19', 'Unité noire', 'Élément mobile', 'Site', 'Élément monile B', 'Cage unit Z11', 'Cage unit Z22', 'Cage unit Z7', 'Lignt tower', 'Spider copy']
+			},
+	biography:{
 			count: 0,
 			category: 'biography',
 			categorie: 'biographie',
@@ -66,20 +66,21 @@ var categories = {
 };
 
 var model = {
-	language: 'fr'
+	language: ''
 }
 
 var controller = {
 	init: function(){
 		view.init();
 	},
+	setInitialLanguage: function(language){
+		model.language = language;
+	},
 	getLanguage: function(){
 		return model.language;
 	},
 	changeLanguage: function(targetLanguage){
-		console.log('targetLang', targetLanguage);
 		model.language = targetLanguage;
-		console.log('in model', model.language);
 		view.render();
 	}
 }
@@ -97,20 +98,46 @@ var view = {
 			}
 		};
 		preloadImages();
+
+		langButton.addEventListener('click', function(e){
+			var language = e.target.innerHTML;
+
+			controller.changeLanguage(language);
+		});
+
+		menu.addEventListener('click', function(e) {
+			console.log(container.scrollTop);
+			container.scrollTop = 0;
+			var category = e.target.id;
+			update(category);
+		});
+
+		function update(category){
+			while(document.images.length){
+				container.removeChild(document.images[0]);
+			};
+
+			if(category!=='biography'){
+				for(var y = 1; y<=categories[category].count; y++){
+					var picture = document.createElement('img');
+					picture.src = '/images/'+category+'/'+y+'.jpg';
+					container.appendChild(picture);
+				}
+			};
+		};
+
+		controller.setInitialLanguage('en');
 		this.render();
 	},
 	clean: function(){
 		for(var x = 0; x<document.getElementsByTagName('a').length; x++){
 			document.getElementsByTagName('a')[x].innerHTML = '';
 		}
-
 	},
 	render: function(){
 		this.clean();
 
 		var language = controller.getLanguage();
-		console.log('view lang', language);
-		console.log('from view model lang', model.language);
 
 		if(language === 'en'){
 			langButton.appendChild(document.createTextNode('fr'));
@@ -131,37 +158,6 @@ var view = {
 				}
 			}
 		};
-
-		function update(category){
-			while(document.images.length){
-				container.removeChild(document.images[0]);
-			}
-
-			for(var prop in categories){
-				if (categories.hasOwnProperty(prop)) {
-					for(var y = 1; y<=categories[prop].count; y++){
-						var picture = document.createElement('img');
-						picture.src = '/images/'+prop+'/'+y+'.jpg';
-						container.appendChild(picture);
-					}
-				}
-			}
-		};
-
-		langButton.addEventListener('click', function(e){
-			var language = e.target.innerHTML;
-			console.log(language);
-			controller.changeLanguage(language);
-		});
-
-		menu.addEventListener('click', function(e) {
-			var category = e.target.innerHTML.toLowerCase();
-
-			if(category === '3d models'){
-				category = 'models';
-			}
-			update(category);
-		});
 	}
 }
 
