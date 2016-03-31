@@ -8,7 +8,8 @@ fileExtensions = {
     '.js':'text/javascript',
     '.jpeg':'image/jpg',
     '.ttf': 'font/opentype',
-    '.gif': 'image/gif'
+    '.gif': 'image/gif',
+    '.ico': 'image/x-icon'
 };
 
 function determineType(ext){

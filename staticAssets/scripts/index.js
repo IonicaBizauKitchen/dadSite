@@ -1,7 +1,11 @@
 var menu = document.getElementById('menu');
-var a = document.getElementsByTagName('a');
+var links = document.getElementsByTagName('a');
 var langButton = document.querySelector('#language a');
 var container = document.getElementById('image');
+var containerHeight = container.clientHeight;
+var descriptionContainer = document.getElementById('description');
+var titleContainer = document.getElementById('title');
+
 
 var categories = {
 	drawings: {
@@ -70,7 +74,19 @@ var model = {
 
 var controller = {
 	init: function(){
+		preloadImages();
 		view.init();
+
+		function preloadImages(){
+			for(var prop in categories){
+				if (categories.hasOwnProperty(prop)) {
+					for(var y = 1; y<=categories[prop].count; y++){
+						var picture = document.createElement('img');
+						picture.src = '/images/'+prop+'/'+y+'.jpg';
+					}
+				}
+			}
+		};
 	},
 	setInitialLanguage: function(language){
 		model.language = language;
@@ -86,79 +102,149 @@ var controller = {
 
 var view = {
 	init: function(){
-		function preloadImages(){
-			for(var prop in categories){
-				if (categories.hasOwnProperty(prop)) {
-					for(var y = 1; y<=categories[prop].count; y++){
-						var picture = document.createElement('img');
-						picture.src = '/images/'+prop+'/'+y+'.jpg';
-					}
-				}
-			}
-		};
-		preloadImages();
+		controller.setInitialLanguage('en');
 
 		langButton.addEventListener('click', function(e){
 			var language = e.target.innerHTML;
-
 			controller.changeLanguage(language);
 		});
 
-		menu.addEventListener('click', function(e) {
-			console.log(container.scrollTop);
-			container.scrollTop = 0;
-			var category = e.target.id;
-			update(category);
-		});
+		function animateUpdate(){
 
-		function update(category){
+		};
+
+		this.render();
+	},
+	eventListenerOnClickPresent: false,
+	eventListenerOnScrollPresent: false,
+	render: function(){
+		var language = controller.getLanguage();
+		var currentPicture = 0;
+		var currentCategory;
+		var currentCategoryCount;
+		var categoryStep;
+
+
+		updateNavigation();
+
+		if(this.eventListenerOnClickPresent===false){
+			this.eventListenerOnClickPresent = true;
+			menu.addEventListener('click', function(e) {
+				var t = e.target;
+				updateAllContent(t);
+			});
+		}
+		if(this.eventListenerOnScrollPresent===false){
+			this.eventListenerOnScrollPresent = true;
+			container.addEventListener('scroll', function(e){
+				updateCurrentPicture(picture);
+			});
+		}
+
+		var selected = document.getElementsByClassName('selected');
+		if(selected.length){
+			updateText(selected[0].id);
+		}
+
+		function updateNavigation(){
+			for(var x = 0; x<links.length; x++){
+				links[x].innerHTML = '';
+			};
+
+			if(language === 'en'){
+				langButton.appendChild(document.createTextNode('fr'));
+				for(var prop in categories){
+					if (categories.hasOwnProperty(prop)) {
+						var textNode = document.createTextNode(categories[prop].category);
+						var index = Object.keys(categories).indexOf(prop);
+						links[index+1].appendChild(textNode);
+					}
+				}
+			}else if(language==='fr'){
+				langButton.appendChild(document.createTextNode('en'));
+				for(var prop in categories){
+					if (categories.hasOwnProperty(prop)) {
+						var textNode = document.createTextNode(categories[prop].categorie);
+						var index = Object.keys(categories).indexOf(prop);
+						links[index+1].appendChild(textNode);
+					}
+				}
+			};
+		};
+
+		function updateAllContent(t){
+			var category = t.id;
+			currentCategory = category;
+			currentCategoryCount = categories[currentCategory].count;
+			// categoryStep = ;
+
+			container.scrollTop = 0;
+
+			if(document.getElementsByClassName('selected').length){
+				document.getElementsByClassName('selected')[0].classList.remove('selected');
+			}
+			t.setAttribute('class', 'selected');
+
+			updatePictures(category);
+			updateText(category);
+
+		};
+
+		function updateCurrentPicture(){
+
+		};
+
+		function updatePictures(category){
+
 			while(document.images.length){
 				container.removeChild(document.images[0]);
 			};
 
-			if(category!=='biography'){
-				for(var y = 1; y<=categories[category].count; y++){
-					var picture = document.createElement('img');
-					picture.src = '/images/'+category+'/'+y+'.jpg';
-					container.appendChild(picture);
-				}
-			};
+			for(var y = 1; y<=categories[category].count; y++){
+				var picture = document.createElement('img');
+				picture.src = '/images/'+category+'/'+y+'.jpg';
+				container.appendChild(picture);
+			}
 		};
 
-		controller.setInitialLanguage('en');
-		this.render();
-	},
-	clean: function(){
-		for(var x = 0; x<document.getElementsByTagName('a').length; x++){
-			document.getElementsByTagName('a')[x].innerHTML = '';
-		}
-	},
-	render: function(){
-		this.clean();
+		function updateText(category){
+			while(descriptionContainer.firstChild){
+				descriptionContainer.removeChild(descriptionContainer.firstChild);
+			};
+			while(titleContainer.firstChild){
+				titleContainer.removeChild(titleContainer.firstChild);
+			};
 
-		var language = controller.getLanguage();
+			var titleText = document.createTextNode(categories[category].titles[currentPicture]);
+			var descriptionText;
 
-		if(language === 'en'){
-			langButton.appendChild(document.createTextNode('fr'));
-			for(var prop in categories){
-				if (categories.hasOwnProperty(prop)) {
-					var textNode = document.createTextNode(categories[prop].category);
-					var index = Object.keys(categories).indexOf(prop);
-					a[index+1].appendChild(textNode);
-				}
-			}
-		}else if(language==='fr'){
-			langButton.appendChild(document.createTextNode('en'));
-			for(var prop in categories){
-				if (categories.hasOwnProperty(prop)) {
-					var textNode = document.createTextNode(categories[prop].categorie);
-					var index = Object.keys(categories).indexOf(prop);
-					a[index+1].appendChild(textNode);
-				}
-			}
+			if(language==='en'){
+					if(category!=='drawings'){
+						descriptionText = document.createTextNode(categories[category].EN);
+					}else if(category==='drawings'){
+						if(currentPicture<=7){
+							descriptionText = document.createTextNode(categories[category].EN);
+						}else{
+							descriptionText = document.createTextNode(categories[category].EN2);
+						}
+					}
+			}else if(language==='fr'){
+					if(category!=='drawings'){
+						descriptionText = document.createTextNode(categories[category].FR);
+					}else if(category==='drawings'){
+						if(currentPicture<=7){
+							descriptionText = document.createTextNode(categories[category].FR);
+						}else{
+							descriptionText = document.createTextNode(categories[category].FR2);
+						}
+					}
+			};
+
+			titleContainer.appendChild(titleText);
+			descriptionContainer.appendChild(descriptionText);
+
 		};
 	}
 }
 
 controller.init();
-
