@@ -3,7 +3,8 @@ var menu = document.getElementById('menu');
 var links = document.getElementsByTagName('a');
 var langButton = document.querySelector('#language a');
 var container = document.getElementById('image');
-var containerHeight = container.clientHeight;
+var contentHeight = 600;
+var content = document.getElementsByClassName('content');
 var descriptionContainer = document.getElementById('description');
 var titleContainer = document.getElementById('title');
 
@@ -110,11 +111,30 @@ var view = {
 			controller.changeLanguage(language);
 		});
 
+		loadImages();
+
+		this.render();
+
+
 		function animateUpdate(){
 
 		};
 
-		this.render();
+		function loadImages(){
+			for(var prop in categories){
+				if (categories.hasOwnProperty(prop)) {
+					for(var y = 1; y<=categories[prop].count; y++){
+						var picture = document.createElement('img');
+						picture.src = '/images/'+prop+'/'+y+'.jpg';
+						var contentDiv = document.createElement('div');
+						contentDiv.setAttribute('class', 'content');
+						contentDiv.setAttribute('id', y-1);
+						contentDiv.appendChild(picture);
+						container.appendChild(contentDiv);
+					}
+				}
+			}
+		};
 	},
 	eventListenerOnClickPresent: false,
 	eventListenerOnScrollPresent: false,
@@ -123,8 +143,6 @@ var view = {
 		var currentPicture = 0;
 		var currentCategory;
 		var currentCategoryCount;
-		var categoryStep;
-
 
 		updateNavigation();
 
@@ -135,10 +153,12 @@ var view = {
 				updateAllContent(t);
 			});
 		}
+
+
 		if(this.eventListenerOnScrollPresent===false){
 			this.eventListenerOnScrollPresent = true;
 			container.addEventListener('scroll', function(e){
-				updateCurrentPicture(picture);
+				updateCurrentPictureVariable(container.scrollTop);
 			});
 		}
 
@@ -146,6 +166,19 @@ var view = {
 		if(selected.length){
 			updateText(selected[0].id);
 		}
+
+		var previousOffsetTop = 0;
+		var nextPictureOffsetTop = content[currentPicture+1].offsetTop;
+		var nextNextPictureOffsetTop = content[currentPicture+2].offsetTop;
+		var currentPictureOffsetTop = content[currentPicture].offsetTop;
+
+		function updateCurrentPictureVariable(scrollPosition){
+			if(scrollPosition>=nextPictureOffsetTop&&scrollPosition<nextNextPictureOffsetTop){
+				currentPicture++;
+				console.log('currentPicture', currentPicture);
+				previousPictureOffsetTop = currentPictureOffsetTop;
+			}
+		};
 
 		function updateNavigation(){
 			for(var x = 0; x<links.length; x++){
@@ -158,7 +191,7 @@ var view = {
 					if (categories.hasOwnProperty(prop)) {
 						var textNode = document.createTextNode(categories[prop].category);
 						var index = Object.keys(categories).indexOf(prop);
-						links[index+1].appendChild(textNode);
+						links[index].appendChild(textNode);
 					}
 				}
 			}else if(language==='fr'){
@@ -167,7 +200,7 @@ var view = {
 					if (categories.hasOwnProperty(prop)) {
 						var textNode = document.createTextNode(categories[prop].categorie);
 						var index = Object.keys(categories).indexOf(prop);
-						links[index+1].appendChild(textNode);
+						links[index].appendChild(textNode);
 					}
 				}
 			};
@@ -177,7 +210,6 @@ var view = {
 			var category = t.id;
 			currentCategory = category;
 			currentCategoryCount = categories[currentCategory].count;
-			// categoryStep = ;
 
 			container.scrollTop = 0;
 
@@ -186,29 +218,13 @@ var view = {
 			}
 			t.setAttribute('class', 'selected');
 
-			updatePictures(category);
 			updateText(category);
 
 		};
 
-		function updateCurrentPicture(){
-
-		};
-
-		function updatePictures(category){
-
-			while(document.images.length){
-				container.removeChild(document.images[0]);
-			};
-
-			for(var y = 1; y<=categories[category].count; y++){
-				var picture = document.createElement('img');
-				picture.src = '/images/'+category+'/'+y+'.jpg';
-				container.appendChild(picture);
-			}
-		};
-
 		function updateText(category){
+			console.log('in updateText', currentPicture);
+
 			while(descriptionContainer.firstChild){
 				descriptionContainer.removeChild(descriptionContainer.firstChild);
 			};
@@ -240,7 +256,6 @@ var view = {
 						}
 					}
 			};
-
 			titleContainer.appendChild(titleText);
 			descriptionContainer.appendChild(descriptionText);
 

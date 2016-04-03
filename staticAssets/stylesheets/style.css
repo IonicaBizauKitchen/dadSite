@@ -13,27 +13,24 @@ body, html{
 
 #content{
 	margin: 0 auto;
-	width: 97%;
-	height: 100%;
+	width: 100%;
+	height: 600px;
 	position: relative;
-}
-
-#header{
-	width: 92.5%;
-	height: 7%;
-	margin: 0 auto;
-	padding-top: 3%;
 }
 
 h1{
 	font-weight: normal;
 	font-size: 1.5em;
 	margin: 0 0 0 0;
-	float: right;
+	position: absolute;
+	top:0;
+	right: 0;
 }
 
 #language {
-	float: left;
+	position: absolute;
+	bottom: 100px;
+	right: 50px;
 }
 
 #menu {
@@ -41,23 +38,23 @@ h1{
 	margin: 0;
     padding: 1%;
     width: 20%;
-    height: 60%;
+    height: 30%;
     position: absolute;
-	right: 0;
-	bottom: 0;
+    right: 0;
+    top: 20px;
+    z-index: 100;
 }
 
 li{
 	display: block;
-	/*text-align: center;*/
 	text-align: right;
 }
 a{
-	position: relative;
+	/*position: relative;*/
 	-webkit-transition: all 0.5s ease-in-out 0s;
   	transition: all 0.5s ease-in-out 0s;
 }
-a:before{
+/*a:before{
 	content: '';
 	position: absolute;
   	width: 100%;
@@ -70,16 +67,16 @@ a:before{
   	transform: scaleX(0);
   	-webkit-transition: all 0.3s ease-in-out 0s;
   	transition: all 0.3s ease-in-out 0s;
-}
+}*/
 
 a:hover{
 	color: #ff3232;
 }
-a:hover:before{
+/*a:hover:before{
 	visibility: visible;
   	-webkit-transform: scaleX(1);
   	transform: scaleX(1);
-}
+}*/
 
 #image, #text{
 	display: inline-block;
@@ -100,6 +97,13 @@ a:hover:before{
 	text-align: center;
 }
 
+#content{
+	width: 100%;
+	height: 700px;
+	margin: 20px 20px 20px 20px;
+	display: inline-block;
+}
+
 #title{
 	width: 100px;
 	height: 100px;
@@ -116,11 +120,6 @@ a:hover:before{
 	position: absolute;
 	bottom: 10%;
 	left: 2%;
-}
-
-img{
-	display: inline-block;
-	margin: 10px 10px 10px 10px;
 }
 
 .selected{

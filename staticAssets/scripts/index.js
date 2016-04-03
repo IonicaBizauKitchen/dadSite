@@ -2,14 +2,14 @@ var menu = document.getElementById('menu');
 var links = document.getElementsByTagName('a');
 var langButton = document.querySelector('#language a');
 var container = document.getElementById('image');
-var containerHeight = container.clientHeight;
+var contentHeight = 600;
+var content = document.getElementsByClassName('content');
 var descriptionContainer = document.getElementById('description');
 var titleContainer = document.getElementById('title');
 
 
 var categories = {
 	drawings: {
-			count: 31,
 			category: 'drawings',
 			categorie: 'dessins',
 			EN: 'pencil and graphite on synthetic paper',
@@ -19,7 +19,6 @@ var categories = {
 			titles: ['SPRN / Vide et raison d’être', 'SHLL / Vide et raison d’être', 'AMHR / Vide et raison d’être', 'CPSL2 / Vide et raison d’être', 'CPSLA / Vide et raison d’être', 'FNNL I / Vide et raison d’être', 'FNNL II / Vide et raison d’être', 'VSSL / Vide et raison d’être', 'Lost and Found', 'Jointures', 'Propulsion #1', 'Slingshot', 'Propulsion # 2', 'Cône de déjection', 'Créature sur tiges', 'Instrument', 'Outil', 'Labourage # 1', 'Labourage # 2', 'Labourage # 3', 'En formation', 'Extention', 'Légéreté de l’être', 'Éternel changement', 'Rayons obliques', 'Matière première #2', 'Tissage # 2','Sans titre', 'Field X', 'Regénération', 'Paysage changeant', 'Perpétuité', 'Matière première #1']
 			},
 	etchings: {
-			count: 10,
 			category: 'etchings',
 			categorie: 'gravures',
 			EN: 'photopolymer etchings and chine-collé on arches',
@@ -27,7 +26,6 @@ var categories = {
 			titles: ['Lac blanc', 'Colonne', 'V-Vase #1', 'Herbe', 'In-Vase', 'Respiration # 1', 'Respiration # 2', 'Respiration # 4', 'Respiration # 5', 'Respiration # 6']
 			},
 	monotypes: {
-			count: 13,
 			category: 'monotypes',
 			categorie: 'monotypes',
 			EN: 'water based monotypes on arches',
@@ -35,7 +33,6 @@ var categories = {
 			titles: ['In transition L', 'Elemental earth worl I', 'Reservoir S', 'Passage M', 'Sheltering secrets', 'Elemental Earth work C', 'Jeux de sable I', 'Jeux de sable Z', 'Passage Z', 'Reservoir # 1', 'Reservoir # 2', 'Reservoir A', 'Sans titre K']
 			},
 	paintings: {
-			count: 16,
 			category: 'paintings',
 			categorie: 'peintures',
 			EN: 'oil on wood pannel',
@@ -43,7 +40,6 @@ var categories = {
 			titles: ['Sans titre L', 'Sans titre N', 'Traverses # 1', 'Traverses # 2', 'Traverses # 3', 'Traverses # 4', 'Traverses # 5', 'Traverses # 6', 'Traverses # 7', 'Traverses # 8', 'Traverses # 9', 'Traverses # 10', 'Traverses # 11', 'Traverses # 12', 'Traverses # 13', 'Traverses # 14']
 			},
 	photography: {
-			count: 15,
 			category: 'photography',
 			categorie: 'photographie',
 			EN: 'Play is oxigen for creation.',
@@ -51,7 +47,6 @@ var categories = {
 			titles: ['Autorespiration # 1', 'Autorespiration # 2', 'Autorespiration # 3', 'Autorespiration # 4', 'Autorespiration # 5', 'Autorespiration # 6', 'Autorespiration # 7', 'Autorespiration # 8', 'Autorespiration # 9', 'Autorespiration # 10', 'Autorespiration # 11', 'Autorespiration # 12', 'Autorespiration # 13', 'Autorespiration # 14', 'Autorespiration # 15']
 			},
 	models: {
-			count:21,
 			category: '3d models',
 			categorie: 'modèles 3d',
 			EN: 'These 3D structures, found objects, and sculptures in most cases were built as research and inspirational models for large scale drawings, a reverse approach to the traditional method, when the media of drawing was an essential study tool for the creation of large sculptures.',
@@ -59,7 +54,6 @@ var categories = {
 			titles: ['Brace', 'Cage unit Z2', 'Cage unit Z3','Cage unit Z4', 'Cage unit Z8', 'Cage unit Z9', 'Luminaires', 'Cage unit Z1', 'Cage unit Z14', 'Cage unit Z22', 'Cage unit Z13', 'Cage unit Z19', 'Unité noire', 'Élément mobile', 'Site', 'Élément monile B', 'Cage unit Z11', 'Cage unit Z22', 'Cage unit Z7', 'Lignt tower', 'Spider copy']
 			},
 	biography:{
-			count: 0,
 			category: 'biography',
 			categorie: 'biographie',
 			FR: 'Vladimir Zabeida est né à Lviv, en Ukraine, en 1956. En 1991, quand l’Union Soviétique était sur le point de s’effondrer, Zabeida a quitté les incertitudes politiques de son pays d’origine et s’est établi au Canada. Sa formation multidisciplinaire en art du Collège d’Arts Appliqués de Lviv, Ukraine (1977-1975) et de l’Académie des Arts de Lviv, Ukraine, (1977-1982) a été instrumentale dans son développement artistique. Pendant plusieurs années, Zabeida a travaillé à l’Atelier Circulaire à Montréal. Se concentrant majoritairement dans la gravure photopolymère et le dessin. Il a aussi conduit des ateliers et séminaires d’estampe. De 2003 à 2004, Vladimir Zabeida a enseigné à l’Université Queens à Kingston, Ontario. Il a aussi maintenu simultanément sa pratique dans son studio à Montréal. Au cours des dernières années, Zabeida a surtout concentre son attention sur sa nouvelle série de travaux, composée de dessins à grande échelle ainsi que de peintures. Il est le récipiendaire de plusieurs prix et reconnaissances, parmis lesquelles: Bourse de recherche et création, Type A, Conseil des arts et des lettres du Québec, (2007); First Prize- “Evolution”, North American Juried Exhibition, Windsor, Canada (2004); Pollock-Krasner Award, New York, NY , USA (2003); First Place, The 8th Great Canadian Printmaking Competition, Toronto, Canada (2002). Les travaux de Vladimir Zabeida ont été exposés internationalement et sont inclus dans plusieurs collections privées et publiques en Amérique du Nord, Europe et Asie: Ernst & Young, Toronto, Canada LOTO- Québec, Montréal, Canada Guang Dong Museum of Art, Guangzhou, China Fidelity Investments, Boston, USA Liu Hai Su Art Museum, Shanghai, China National Bank of Canada, Montréal, Canada Le Cirque du Soleil, Montréal, Canada; Rio Tinto Alcan Canada, Montréal, Canada Meditech Circle, Westwood, MA, USA Bibliotheque Nationale du Québec, Montréal, Canada',
@@ -80,7 +74,7 @@ var controller = {
 		function preloadImages(){
 			for(var prop in categories){
 				if (categories.hasOwnProperty(prop)) {
-					for(var y = 1; y<=categories[prop].count; y++){
+					for(var y = 1; y<=categories[prop].titles.length; y++){
 						var picture = document.createElement('img');
 						picture.src = '/images/'+prop+'/'+y+'.jpg';
 					}
@@ -109,21 +103,37 @@ var view = {
 			controller.changeLanguage(language);
 		});
 
+		loadImages();
+
+		this.render();
+
+
 		function animateUpdate(){
 
 		};
 
-		this.render();
+		function loadImages(){
+			for(var prop in categories){
+				if (categories.hasOwnProperty(prop)) {
+					for(var y = 1; y<=categories[prop].titles.length; y++){
+						var picture = document.createElement('img');
+						picture.src = '/images/'+prop+'/'+y+'.jpg';
+						var contentDiv = document.createElement('div');
+						contentDiv.setAttribute('class', 'content');
+						contentDiv.setAttribute('id', y-1);
+						contentDiv.appendChild(picture);
+						container.appendChild(contentDiv);
+					}
+				}
+			}
+		};
 	},
 	eventListenerOnClickPresent: false,
 	eventListenerOnScrollPresent: false,
 	render: function(){
 		var language = controller.getLanguage();
-		var currentPicture = 0;
+		var currentPictureIndex;
 		var currentCategory;
-		var currentCategoryCount;
-		var categoryStep;
-
 
 		updateNavigation();
 
@@ -131,20 +141,37 @@ var view = {
 			this.eventListenerOnClickPresent = true;
 			menu.addEventListener('click', function(e) {
 				var t = e.target;
-				updateAllContent(t);
-			});
-		}
-		if(this.eventListenerOnScrollPresent===false){
-			this.eventListenerOnScrollPresent = true;
-			container.addEventListener('scroll', function(e){
-				updateCurrentPicture(picture);
+				goToCategory(t);
 			});
 		}
 
-		var selected = document.getElementsByClassName('selected');
-		if(selected.length){
-			updateText(selected[0].id);
+		if(this.eventListenerOnScrollPresent===false){
+			this.eventListenerOnScrollPresent = true;
+			container.addEventListener('scroll', function(e){
+				getCurrentlyDisplayedPicture(container.scrollTop);
+			});
+			currentPictureIndex = 0;
+			currentCategory = content[currentPictureIndex].parentNode.id;
 		}
+
+		function getCurrentlyDisplayedPicture(scrollPosition){
+			if(scrollPosition>=content[currentPictureIndex].offsetTop&&scrollPosition<content[currentPictureIndex-1]){
+				currentPictureIndex = currentPictureIndex;
+			}else{
+				currentPictureIndex++;
+				currentCategory = content[currentPictureIndex].parentNode.id;
+				updateSelector(document.getElementById(currentCategory));
+				updateText(currentCategory);
+			}
+
+			if(currentPictureIndex!==0&&scrollPosition<content[currentPictureIndex].offsetTop){
+				currentPictureIndex--;
+				currentCategory = content[currentPictureIndex].parentNode.id;
+				updateSelector(document.getElementById(currentCategory));
+				updateText(currentCategory);
+			}
+
+		};
 
 		function updateNavigation(){
 			for(var x = 0; x<links.length; x++){
@@ -157,7 +184,7 @@ var view = {
 					if (categories.hasOwnProperty(prop)) {
 						var textNode = document.createTextNode(categories[prop].category);
 						var index = Object.keys(categories).indexOf(prop);
-						links[index+1].appendChild(textNode);
+						links[index].appendChild(textNode);
 					}
 				}
 			}else if(language==='fr'){
@@ -166,45 +193,30 @@ var view = {
 					if (categories.hasOwnProperty(prop)) {
 						var textNode = document.createTextNode(categories[prop].categorie);
 						var index = Object.keys(categories).indexOf(prop);
-						links[index+1].appendChild(textNode);
+						links[index].appendChild(textNode);
 					}
 				}
 			};
+
+			var selected = document.getElementsByClassName('selected');
+			if(selected.length){
+				updateText(selected[0].id);
+			}
 		};
 
-		function updateAllContent(t){
+		function goToCategory(t){
 			var category = t.id;
 			currentCategory = category;
-			currentCategoryCount = categories[currentCategory].count;
-			// categoryStep = ;
+			// container.scrollTop = document.
+			updateSelector(category);
+			updateText(category);
+		};
 
-			container.scrollTop = 0;
-
+		function updateSelector(category){
 			if(document.getElementsByClassName('selected').length){
 				document.getElementsByClassName('selected')[0].classList.remove('selected');
-			}
-			t.setAttribute('class', 'selected');
-
-			updatePictures(category);
-			updateText(category);
-
-		};
-
-		function updateCurrentPicture(){
-
-		};
-
-		function updatePictures(category){
-
-			while(document.images.length){
-				container.removeChild(document.images[0]);
 			};
-
-			for(var y = 1; y<=categories[category].count; y++){
-				var picture = document.createElement('img');
-				picture.src = '/images/'+category+'/'+y+'.jpg';
-				container.appendChild(picture);
-			}
+			category.setAttribute('class', 'selected');
 		};
 
 		function updateText(category){
@@ -215,14 +227,14 @@ var view = {
 				titleContainer.removeChild(titleContainer.firstChild);
 			};
 
-			var titleText = document.createTextNode(categories[category].titles[currentPicture]);
+			var titleText = document.createTextNode(categories[category].titles[currentPictureIndex]);
 			var descriptionText;
 
 			if(language==='en'){
 					if(category!=='drawings'){
 						descriptionText = document.createTextNode(categories[category].EN);
 					}else if(category==='drawings'){
-						if(currentPicture<=7){
+						if(currentPictureIndex<=7){
 							descriptionText = document.createTextNode(categories[category].EN);
 						}else{
 							descriptionText = document.createTextNode(categories[category].EN2);
@@ -232,17 +244,15 @@ var view = {
 					if(category!=='drawings'){
 						descriptionText = document.createTextNode(categories[category].FR);
 					}else if(category==='drawings'){
-						if(currentPicture<=7){
+						if(currentPictureIndex<=7){
 							descriptionText = document.createTextNode(categories[category].FR);
 						}else{
 							descriptionText = document.createTextNode(categories[category].FR2);
 						}
 					}
 			};
-
 			titleContainer.appendChild(titleText);
 			descriptionContainer.appendChild(descriptionText);
-
 		};
 	}
 }
