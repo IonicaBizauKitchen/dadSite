@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "bundle": "browserify staticAssets/scripts/index.js -r -o --standalone controller > staticAssets/scripts/bundle.js",
+    "bundle": "browserify staticAssets/scripts/index.js -r -o staticAssets/scripts/bundle.js",
     "watch": "watchify staticAssets/scripts/index.js -r -o staticAssets/scripts/bundle.js"
   },
   "author": "VZ",
