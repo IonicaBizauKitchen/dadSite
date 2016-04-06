@@ -77,8 +77,27 @@ var categories = {
 };
 
 var model = {
-	language: ''
-}
+	language: '',
+	currentPictureIndex: 0,
+	currentPictureCategory: (function(){
+		for(var prop in categories){
+			if(categories.hasOwnProperty(prop)){
+				if(prop!=='biography'&&prop!=='titlesCumulative'){
+					if(this.currentPictureIndex>=categories[prop].startIndex&&this.currentPictureIndex<=categories[prop].endIndex){
+						return prop;
+					};
+				};
+			};
+		};
+	})(),
+	currentPictureOffset: (function(){
+		console.log(this.currentPictureIndex);
+		return document.getElementById(this.currentPictureIndex.toString()).offsetTop;
+	})(),
+	currentPictureLimit: (function(){
+		return this.currentPictureOffset+contentHeight;
+	})()
+};
 
 var controller = {
 	init: function(){
@@ -108,13 +127,22 @@ var controller = {
 	changeLanguage: function(targetLanguage){
 		model.language = targetLanguage;
 		view.render();
+	},
+	setPictureAttributes: function(pictureIndex){
+		model.currentPictureIndex = pictureIndex;
+	},
+	getPictureAttributes: function(){
+		return {
+			currentPictureIndex: model.currentPictureIndex,
+			currentPictureCategory: model.currentPictureCategory(),
+			currentPictureOffset: model.currentPictureOffset(),
+			currentPictureLimit: model.currentPictureLimit()
+		}
 	}
 }
 
 var view = {
 	init: function(){
-		controller.setInitialLanguage('en');
-
 		langButton.addEventListener('click', function(e){
 			var language = e.target.innerHTML;
 			controller.changeLanguage(language);
@@ -122,14 +150,17 @@ var view = {
 
 		loadImages();
 
-		this.render();
-
 		[].slice.call(document.images).forEach(function(image){
 			image.onload = function(){
 				var halfImage = image.clientHeight/2;
 				image.style.marginTop = contentHeight/2-halfImage+'px';
 			}
 		});
+
+		controller.setInitialLanguage('en');
+		controller.setPictureAttributes(0);
+
+		this.render();
 
 		function loadImages(){
 			var index = 0;
@@ -155,61 +186,58 @@ var view = {
 	eventListenerOnScrollPresent: false,
 	render: function(){
 		var language = controller.getLanguage();
-		var currentPictureIndex;
-		var currentPictureCategory, currentPictureOffset, currentPictureLimit;
+		var currentPictureIndex = controller.getPictureAttributes().currentPictureIndex;
+		var currentPictureCategory = controller.getPictureAttributes().currentPictureCategory;
+		var currentPictureOffset = controller.getPictureAttributes().currentPictureOffset;
+		var currentPictureLimit = controller.getPictureAttributes().currentPictureLimit;
+
+
+		updateNavigation();
 
 		if(this.eventListenerOnClickPresent===false){
 			this.eventListenerOnClickPresent = true;
 			menu.addEventListener('click', function(e) {
 				var t = e.target;
-				goToCategory(t);
+				var currentPictureIndex = categories[t.id].startIndex;
+				controller.setPictureAttributes(currentPictureIndex);
+				var scrollTo = document.getElementById(currentPictureIndex.toString()).offsetTop;
+				container.scrollTop = scrollTo;
+				updateSelector(currentPictureCategory);
+				updateText(currentPictureCategory, currentPictureIndex);
 			});
-		};
+		}
 
 		if(this.eventListenerOnScrollPresent===false){
 			this.eventListenerOnScrollPresent = true;
-			currentPictureIndex = 0;
-			updateVariables();
-			updateNavigation();
-			updateText();
-
 			container.addEventListener('scroll', function(e){
-				updateContent(container.scrollTop);
+				updatePicture(container.scrollTop);
 			});
-		};
+		}
 
-		updateNavigation();
-		updateVariables();
-
-
-		function updateContent(scrollPosition){
-			if(scrollPosition+250>currentPictureLimit-8){
-				currentPictureIndex++;
-				updateVariables();
-			}
-
-			if(scrollPosition+contentHeight/2<currentPictureOffset-8&&currentPictureIndex!==0){
-				currentPictureIndex--;
-			  	updateVariables();
-			}
-		};
-
-		function updateVariables(){
-			getImageCategory();
-			currentPictureOffset = document.getElementsByClassName('content')[currentPictureIndex].offsetTop;
-			currentPictureLimit = currentPictureOffset+contentHeight;
-			updateSelector();
-			updateText();
-		};
-
-		function getImageCategory(){
-			for(var prop in categories){
-				if(categories.hasOwnProperty(prop)){
-					if(prop!=='biography'&&prop!=='titlesCumulative'&&currentPictureIndex>=categories[prop].startIndex&&currentPictureIndex<=categories[prop].endIndex){
-						currentPictureCategory = prop;
-					};
-				};
+		function updateSelector(category){
+			if(document.getElementsByClassName('selected').length){
+				document.getElementsByClassName('selected')[0].classList.remove('selected');
 			};
+			document.getElementById(category).setAttribute('class', 'selected');
+		};
+
+		function updatePicture(scrollPosition){
+
+			if(scrollPosition+contentHeight/2>currentPictureLimit-8){
+				var prevPic = controller.getPictureAttributes().currentPictureIndex;
+				var curPic = prevPic+1;
+				controller.setPictureAttributes(curPic);
+				updateText(category, curPic);
+				updateSelector(category);
+			}
+
+			if(scrollPosition+contentHeight/2<currentPictureOffset-8&&scrollPicInd!==0){
+				var prevPic = controller.getPictureAttributes().currentPictureIndex;
+				var curPic = prevPic-1;
+				controller.setPictureAttributes(curPic);
+				updateText(currentPictureCategory, curPic);
+				updateSelector(currentPictureCategory);
+			}
 		};
 
 		function updateNavigation(){
@@ -243,27 +271,12 @@ var view = {
 
 			var selected = document.getElementsByClassName('selected');
 			if(selected.length){
-				updateText();
+				updateText(currentPictureCategory, currentPictureIndex);
 			}
 		};
 
-		function goToCategory(t){
-			currentPictureCategory = t.id;
-			currentPictureIndex = categories[currentPictureCategory].startIndex;
-			var scrollTo = document.getElementById(currentPictureIndex.toString()).offsetTop;
-			container.scrollTop = scrollTo;
-			updateSelector();
-			updateText();
-		};
+		function updateText(category, picture){
 
-		function updateSelector(){
-			if(document.getElementsByClassName('selected').length){
-				document.getElementsByClassName('selected')[0].classList.remove('selected');
-			};
-			document.getElementById(currentPictureCategory).setAttribute('class', 'selected');
-		};
-
-		function updateText(){
 			while(descriptionContainer.firstChild){
 				descriptionContainer.removeChild(descriptionContainer.firstChild);
 			};
@@ -271,29 +284,28 @@ var view = {
 				titleContainer.removeChild(titleContainer.firstChild);
 			};
 
-			var titleText = document.createTextNode(categories.titlesCumulative[currentPictureIndex]);
-
+			var titleText = document.createTextNode(categories.titlesCumulative[picture]);
 
 			var descriptionText;
 
 			if(language==='en'){
-					if(currentPictureCategory!=='drawings'){
-						descriptionText = document.createTextNode(categories[currentPictureCategory].EN);
-					}else if(currentPictureCategory==='drawings'){
-						if(currentPictureIndex<=7){
-							descriptionText = document.createTextNode(categories[currentPictureCategory].EN);
+					if(category!=='drawings'){
+						descriptionText = document.createTextNode(categories[category].EN);
+					}else if(category==='drawings'){
+						if(picture<=7){
+							descriptionText = document.createTextNode(categories[category].EN);
 						}else{
-							descriptionText = document.createTextNode(categories[currentPictureCategory].EN2);
+							descriptionText = document.createTextNode(categories[category].EN2);
 						}
 					}
 			}else if(language==='fr'){
-					if(currentPictureCategory!=='drawings'){
-						descriptionText = document.createTextNode(categories[currentPictureCategory].FR);
-					}else if(currentPictureCategory==='drawings'){
-						if(currentPictureIndex<=7){
-							descriptionText = document.createTextNode(categories[currentPictureCategory].FR);
+					if(category!=='drawings'){
+						descriptionText = document.createTextNode(categories[category].FR);
+					}else if(category==='drawings'){
+						if(picture<=7){
+							descriptionText = document.createTextNode(categories[category].FR);
 						}else{
-							descriptionText = document.createTextNode(categories[currentPictureCategory].FR2);
+							descriptionText = document.createTextNode(categories[category].FR2);
 						}
 					}
 			};
