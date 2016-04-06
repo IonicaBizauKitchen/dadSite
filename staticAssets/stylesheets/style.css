@@ -132,3 +132,11 @@ a:hover{
 .selected{
 	color: #ff3232;
 }
+
+body[data-lang="en"] *[data-lang="fr"] {
+    display: none;
+}
+
+body[data-lang="fr"] *[data-lang="en"] {
+    display: none;
+}
